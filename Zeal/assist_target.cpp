@@ -97,6 +97,10 @@ void AssistTarget::HandleDamagePacket(const Zeal::Packets::Damage_Struct *dmg) {
   // With the bar off nobody consumes this data: stay fully idle (no map churn, no log spam).
   if (!setting_enabled.get()) return;
   if (!dmg || dmg->target == 0 || dmg->source == 0) return;
+  // Melee only: spells never count as candidate events. Same melee/spell split the floating
+  // damage module uses (is_spell = spell_id > 0), so the bar tracks physical hits and does not
+  // flip when a nuke or other spell damage lands on someone else.
+  if (dmg->spellid > 0) return;
   const DWORD now = GetTickCount();
   victim_of[dmg->source] = {dmg->target, now};  // attacker -> most recent victim it damaged.
   hit_by[dmg->target] = {dmg->source, now};     // victim -> most recent attacker that damaged it.
@@ -106,7 +110,10 @@ void AssistTarget::HandleDamagePacket(const Zeal::Packets::Damage_Struct *dmg) {
     auto dst = Zeal::Game::get_entity_by_id(dmg->target);
     const char *src_name = src ? src->Name : "?";
     const char *dst_name = dst ? dst->Name : "?";
-    Zeal::Game::print_chat("AssistBar: %s -> %s (%d)", src_name, dst_name, dmg->damage);
+    // type/spellid are logged so the raw attack-type values can be verified in game (the
+    // melee-only filter above keys off spellid; type is not yet documented in this repo).
+    Zeal::Game::print_chat("AssistBar: %s -> %s (%d) [type=%d spell=%d]", src_name, dst_name, dmg->damage,
+                            dmg->type, dmg->spellid);
   }
 
   // Opportunistic prune of stale entries (map stays small; only visible combatants).

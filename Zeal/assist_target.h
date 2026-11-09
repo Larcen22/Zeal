@@ -14,6 +14,7 @@
 // - Mode 1 (defend): the entity that most recently damaged your target.
 // The legacy client does not store other entities' targets in memory, so this is derived from
 // OP_Damage events (Damage_Struct source/target spawn ids) within a configurable freshness window.
+// Only melee damage counts (spells are ignored; see HandleDamagePacket).
 class AssistTarget {
  public:
   explicit AssistTarget(class ZealService *zeal);
