@@ -1691,6 +1691,7 @@ static bool handle_animation_packet(Zeal::Packets::Animation_Struct *animation) 
       case DoAnim::Piercing:
       case DoAnim::Slam:
       case DoAnim::DualWield:
+      case DoAnim::Hand2Hand:
         break;
       default:
         return false;  // Not a melee weapon attack, leave it unchanged.
@@ -1717,6 +1718,18 @@ static bool handle_animation_packet(Zeal::Packets::Animation_Struct *animation) 
                 static_cast<BYTE>(DoAnim::Piercing)};   // 2H pierce
         if (monk)
           pool.push_back(static_cast<BYTE>(DoAnim::EagleStrike));
+        break;
+      case Zeal::GameEnums::SkillType::SkillHandtoHand:
+        pool = {static_cast<BYTE>(DoAnim::Weapon1H),    // 1H slash
+                static_cast<BYTE>(DoAnim::Piercing),     // 1H poke / pierce
+                static_cast<BYTE>(DoAnim::Slam),         // 1H slam
+                static_cast<BYTE>(DoAnim::Slashing2H),   // 2H slash
+                static_cast<BYTE>(DoAnim::Weapon2H)};    // 2H blunt
+        if (monk)
+        {
+          pool.push_back(static_cast<BYTE>(DoAnim::TigerClaw));
+          pool.push_back(static_cast<BYTE>(DoAnim::EagleStrike));
+        }
         break;
       default:
         return false;  // Unarmed or non-melee weapon, leave it unchanged.
