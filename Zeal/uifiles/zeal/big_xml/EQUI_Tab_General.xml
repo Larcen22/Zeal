@@ -1672,13 +1672,105 @@
       <PressedFlyby>A_BtnPressedFlyby</PressedFlyby>
     </ButtonDrawTemplate>
   </Button>
+  <Button item="Zeal_RandomizeMelee">
+      <ScreenID>Zeal_RandomizeMelee</ScreenID>
+      <RelativePosition>true</RelativePosition>
+      <Location>
+        <X>720</X>
+        <Y>794</Y>
+      </Location>
+      <Size>
+        <CX>300</CX>
+        <CY>40</CY>
+      </Size>
+      <Style_VScroll>false</Style_VScroll>
+      <Style_HScroll>false</Style_HScroll>
+      <Style_Transparent>false</Style_Transparent>
+      <Style_Checkbox>true</Style_Checkbox>
+      <TooltipReference>Randomly vary 1H/2H attack animations; the default plays most often.</TooltipReference>
+      <Text>Randomize melee</Text>
+      <TextColor>
+        <R>255</R>
+        <G>255</G>
+        <B>255</B>
+      </TextColor>
+      <ButtonDrawTemplate>
+        <Normal>A_BtnNormal</Normal>
+        <Pressed>A_BtnPressed</Pressed>
+        <Flyby>A_BtnFlyby</Flyby>
+        <Disabled>A_BtnDisabled</Disabled>
+        <PressedFlyby>A_BtnPressedFlyby</PressedFlyby>
+      </ButtonDrawTemplate>
+    </Button>
+
+  <Button item="Zeal_MonkAttacks">
+      <ScreenID>Zeal_MonkAttacks</ScreenID>
+      <RelativePosition>true</RelativePosition>
+      <Location>
+        <X>720</X>
+        <Y>836</Y>
+      </Location>
+      <Size>
+        <CX>300</CX>
+        <CY>40</CY>
+      </Size>
+      <Style_VScroll>false</Style_VScroll>
+      <Style_HScroll>false</Style_HScroll>
+      <Style_Transparent>false</Style_Transparent>
+      <Style_Checkbox>true</Style_Checkbox>
+      <TooltipReference>Include Tiger Claw and Eagle Strike in the randomized melee animations.</TooltipReference>
+      <Text>Monk attacks</Text>
+      <TextColor>
+        <R>255</R>
+        <G>255</G>
+        <B>255</B>
+      </TextColor>
+      <ButtonDrawTemplate>
+        <Normal>A_BtnNormal</Normal>
+        <Pressed>A_BtnPressed</Pressed>
+        <Flyby>A_BtnFlyby</Flyby>
+        <Disabled>A_BtnDisabled</Disabled>
+        <PressedFlyby>A_BtnPressedFlyby</PressedFlyby>
+      </ButtonDrawTemplate>
+    </Button>
+
+  <Button item="Zeal_FlyingKick">
+      <ScreenID>Zeal_FlyingKick</ScreenID>
+      <RelativePosition>true</RelativePosition>
+      <Location>
+        <X>720</X>
+        <Y>878</Y>
+      </Location>
+      <Size>
+        <CX>300</CX>
+        <CY>40</CY>
+      </Size>
+      <Style_VScroll>false</Style_VScroll>
+      <Style_HScroll>false</Style_HScroll>
+      <Style_Transparent>false</Style_Transparent>
+      <Style_Checkbox>true</Style_Checkbox>
+      <TooltipReference>Use the Flying Kick animation instead of Kick (all races except Dwarf, Halfling, Gnome, Troll, Ogre, and Vah Shir).</TooltipReference>
+      <Text>Flying kick</Text>
+      <TextColor>
+        <R>255</R>
+        <G>255</G>
+        <B>255</B>
+      </TextColor>
+      <ButtonDrawTemplate>
+        <Normal>A_BtnNormal</Normal>
+        <Pressed>A_BtnPressed</Pressed>
+        <Flyby>A_BtnFlyby</Flyby>
+        <Disabled>A_BtnDisabled</Disabled>
+        <PressedFlyby>A_BtnPressedFlyby</PressedFlyby>
+      </ButtonDrawTemplate>
+    </Button>
 
   <Button item="Zeal_AltTransportCats">
     <ScreenID>Zeal_AltTransportCats</ScreenID>
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>796</Y>
+      <Y>922</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1709,7 +1801,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>840</Y>
+      <Y>966</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1740,7 +1832,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>884</Y>
+      <Y>1010</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1771,7 +1863,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>928</Y>
+      <Y>1054</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1802,7 +1894,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>972</Y>
+      <Y>1098</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1833,7 +1925,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>1016</Y>
+      <Y>1142</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1864,7 +1956,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>1060</Y>
+      <Y>1186</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1895,7 +1987,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>1104</Y>
+      <Y>1230</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -1926,7 +2018,7 @@
     <RelativePosition>true</RelativePosition>
     <Location>
       <X>720</X>
-      <Y>1148</Y>
+      <Y>1274</Y>
     </Location>
     <Size>
       <CX>300</CX>
@@ -2036,6 +2128,9 @@
     <Pieces>Zeal_UseZealAssistOn</Pieces>
     <Pieces>Zeal_DetectAssistFailure</Pieces>
     <Pieces>Zeal_SlashNotPoke</Pieces>
+    <Pieces>Zeal_RandomizeMelee</Pieces>
+    <Pieces>Zeal_MonkAttacks</Pieces>
+    <Pieces>Zeal_FlyingKick</Pieces>
     <Pieces>Zeal_AltTransportCats</Pieces>
     <Pieces>Zeal_SuppressLifetapFeeling</Pieces>
     <Pieces>Zeal_SuppressOtherPets</Pieces>

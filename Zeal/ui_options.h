@@ -44,6 +44,9 @@ class ui_options {
   ZealSetting<std::string> setting_tell_sound = {"", "Zeal", "TellSound", false,
                                                  [this](const std::string &) { PlayTellSound(); }};
   ZealSetting<bool> setting_slash_not_poke = {false, "Zeal", "SlashNotPoke", false};
+  ZealSetting<bool> setting_randomize_melee = {false, "Zeal", "RandomizeMelee", true};
+  ZealSetting<bool> setting_monk_attacks = {false, "Zeal", "MonkAttacks", true};
+  ZealSetting<bool> setting_flying_kick = {false, "Zeal", "FlyingKick", true};
   ZealSetting<bool> setting_escape = {false, "Zeal", "Escape", false};
   ZealSetting<bool> setting_escape_raid_lock = {false, "Zeal", "EscapeRaidLock", false};
   ZealSetting<bool> setting_dialog_position = {false, "Zeal", "DialogPosition", false,

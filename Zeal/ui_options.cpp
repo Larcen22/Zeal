@@ -1,6 +1,9 @@
 #include "ui_options.h"
 
+#include <algorithm>
 #include <array>
+#include <random>
+#include <vector>
 
 #include "assist.h"
 #include "binds.h"
@@ -546,6 +549,12 @@ void ui_options::InitGeneral() {
   });
   ui->AddCheckboxCallback(wnd, "Zeal_SlashNotPoke",
                           [this](Zeal::GameUI::BasicWnd *wnd) { setting_slash_not_poke.set(wnd->Checked); });
+  ui->AddCheckboxCallback(wnd, "Zeal_RandomizeMelee",
+                          [this](Zeal::GameUI::BasicWnd *wnd) { setting_randomize_melee.set(wnd->Checked); });
+  ui->AddCheckboxCallback(wnd, "Zeal_MonkAttacks",
+                          [this](Zeal::GameUI::BasicWnd *wnd) { setting_monk_attacks.set(wnd->Checked); });
+  ui->AddCheckboxCallback(wnd, "Zeal_FlyingKick",
+                          [this](Zeal::GameUI::BasicWnd *wnd) { setting_flying_kick.set(wnd->Checked); });
   ui->AddCheckboxCallback(wnd, "Zeal_AltTransportCats", [this](Zeal::GameUI::BasicWnd *wnd) {
     ZealService::get_instance()->spell_sets->setting_alternate_transport_categories.set(wnd->Checked);
   });
@@ -1183,6 +1192,9 @@ void ui_options::UpdateOptionsGeneral() {
   ui->SetChecked("Zeal_MouseoverTooltips",
                  ZealService::get_instance()->item_displays->setting_mouseover_tooltips.get());
   ui->SetChecked("Zeal_SlashNotPoke", setting_slash_not_poke.get());
+  ui->SetChecked("Zeal_RandomizeMelee", setting_randomize_melee.get());
+  ui->SetChecked("Zeal_MonkAttacks", setting_monk_attacks.get());
+  ui->SetChecked("Zeal_FlyingKick", setting_flying_kick.get());
   ui->SetChecked("Zeal_InviteDialog", setting_invite_dialog.get());
   ui->SetChecked("Zeal_AltTransportCats",
                  ZealService::get_instance()->spell_sets->setting_alternate_transport_categories.get());
@@ -1642,14 +1654,89 @@ static int __fastcall CConfirmationDialog_PostDraw(Zeal::GameUI::CConfirmationDi
 // Support modifying / substituting animations.
 static bool handle_animation_packet(Zeal::Packets::Animation_Struct *animation) {
   const auto char_info = Zeal::Game::get_char_info();
+  using DoAnim = Zeal::GameEnums::DoAnimation;
+  auto action = static_cast<DoAnim>(animation->action);
 
-  // Allow changing the default piercing-like 2HB anim with the 2HS one.
-  auto action = static_cast<Zeal::GameEnums::DoAnimation>(animation->action);
-  if (char_info && action == Zeal::GameEnums::DoAnimation::Weapon2H &&
+  // Flying Kick instead of Kick, for all races except Dwarf, Halfling, Gnome, Troll, Ogre, and Vah Shir.
+  if (action == DoAnim::Kick &&
+      ZealService::get_instance()->ui->options->setting_flying_kick.get() && char_info) {
+    const WORD race = char_info->Race;
+    if (race != Zeal::GameEnums::RaceTypes::Dwarf &&
+        race != Zeal::GameEnums::RaceTypes::Halfling && race != Zeal::GameEnums::RaceTypes::Gnome &&
+        race != Zeal::GameEnums::RaceTypes::Troll && race != Zeal::GameEnums::RaceTypes::Ogre &&
+        race != Zeal::GameEnums::RaceTypes::VahShir) {
+      animation->action = static_cast<BYTE>(DoAnim::FlyingKick);
+      return false;
+    }
+  }
+
+  // Keep using the 2HS animation for 2HB weapons (slash-not-poke).
+  action = static_cast<DoAnim>(animation->action);
+  if (char_info && action == DoAnim::Weapon2H &&
       ZealService::get_instance()->ui->options->setting_slash_not_poke.get()) {
     const auto weapon = char_info->InventoryItem[Zeal::GameEnums::EquipSlot::Primary];
     if (Zeal::Game::get_weapon_skill(weapon) == Zeal::GameEnums::SkillType::Skill2HBlunt)
-      animation->action = static_cast<BYTE>(Zeal::GameEnums::DoAnimation::Slashing2H);
+      animation->action = static_cast<BYTE>(DoAnim::Slashing2H);
+  }
+
+  // Randomize melee weapon attack animations. The current/default animation stays
+  // the most common; about 20% of swings swap to a random alternate from the pool.
+  if (ZealService::get_instance()->ui->options->setting_randomize_melee.get()) {
+    action = static_cast<DoAnim>(animation->action);
+    // Only touch actual melee weapon swings (not spells, kicks, ranged, or unarmed).
+    switch (action) {
+      case DoAnim::Weapon1H:
+      case DoAnim::Weapon2H:
+      case DoAnim::Slashing2H:
+      case DoAnim::Piercing:
+      case DoAnim::Slam:
+      case DoAnim::DualWield:
+        break;
+      default:
+        return false;  // Not a melee weapon attack, leave it unchanged.
+    }
+
+    const auto weapon = char_info ? char_info->InventoryItem[Zeal::GameEnums::EquipSlot::Primary]
+                                  : nullptr;
+    const bool monk = ZealService::get_instance()->ui->options->setting_monk_attacks.get();
+    std::vector<BYTE> pool;
+    switch (Zeal::Game::get_weapon_skill(weapon)) {
+      case Zeal::GameEnums::SkillType::Skill1HBlunt:
+      case Zeal::GameEnums::SkillType::Skill1HSlashing:
+      case Zeal::GameEnums::SkillType::Skill1HPiercing:
+        pool = {static_cast<BYTE>(DoAnim::Weapon1H),  // 1H slash
+                static_cast<BYTE>(DoAnim::Piercing),   // 1H poke / pierce
+                static_cast<BYTE>(DoAnim::Slam)};      // 1H slam
+        if (monk)
+          pool.push_back(static_cast<BYTE>(DoAnim::TigerClaw));
+        break;
+      case Zeal::GameEnums::SkillType::Skill2HBlunt:
+      case Zeal::GameEnums::SkillType::Skill2HSlashing:
+        pool = {static_cast<BYTE>(DoAnim::Slashing2H),  // 2H slash
+                static_cast<BYTE>(DoAnim::Weapon2H),    // 2H blunt
+                static_cast<BYTE>(DoAnim::Piercing)};   // 2H pierce
+        if (monk)
+          pool.push_back(static_cast<BYTE>(DoAnim::EagleStrike));
+        break;
+      default:
+        return false;  // Unarmed or non-melee weapon, leave it unchanged.
+    }
+
+    // Drop the current animation so the default keeps the lion's share of the time.
+    const BYTE current = animation->action;
+    std::vector<BYTE> alternates;
+    for (const BYTE a : pool)
+      if (a != current)
+        alternates.push_back(a);
+    if (alternates.empty())
+      return false;
+
+    static thread_local std::mt19937 rng{std::random_device{}()};
+    std::uniform_int_distribution<int> roll(0, 99);
+    if (roll(rng) < 20) {
+      std::uniform_int_distribution<int> pick(0, static_cast<int>(alternates.size()) - 1);
+      animation->action = alternates[pick(rng)];
+    }
   }
 
   return false;  // Continue processing of the possibly modified animation.
